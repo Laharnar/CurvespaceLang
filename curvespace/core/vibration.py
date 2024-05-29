@@ -7,8 +7,8 @@ import json
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from mechanistic.agentic_constructs import sendWithMessage as ai
-from mechanistic.mechanistic_layers import BinaryConstruct
+from agentic_constructs import sendWithMessage as ai
+from mechanistic_layers import BinaryConstruct
 
 print("ask something")
 user = input()

@@ -4,7 +4,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import ollama
 import datetime
-from mechanistic.mechanistic_layers import BinaryConstruct
+from mechanistic_layers import BinaryConstruct
 
 from groq import Groq
 groqClient = Groq(api_key="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")
