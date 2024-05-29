@@ -4,6 +4,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import ollama
 import datetime
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'core/')))
 from mechanistic_layers import BinaryConstruct
 
 from groq import Groq

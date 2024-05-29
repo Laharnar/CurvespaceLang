@@ -6,6 +6,7 @@ import json
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'core/')))
 
 from agentic_constructs import sendWithMessage as ai
 from mechanistic_layers import BinaryConstruct
