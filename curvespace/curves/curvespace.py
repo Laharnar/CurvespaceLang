@@ -2,6 +2,9 @@ import os
 import sys
 import traceback
 import json
+
+from core import agentic_constructs
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../core/')))
 
 
@@ -72,8 +75,49 @@ class CurveSpace:
         return curve_space
 
 
+def findStableCategories():
+    # goes up in layers, generating meta until it finds stability of orbits
+    pass
+
+def findCommonCategories(prompt1, prompt2):
+	# return 2 curves, and common category/ies
+    # A) generate categories with ai
+    # B) auto plug into known curvespace, and it finds common categories
+	pass
+
+def aiToCurve():
+    pass
+
+def curveToAi():
+    pass
+
 if __name__ == "__main__":
+    someText = "parser.print_parsed_text()"
+    while(True):
+        user = input()
+        answer = ai.sendWithMessage(user)
+        expert = "As an expert list maker, please list each abstraction, as part of json surround entire list with ```.\n"+"List meta abstractions from this:\n"
+        answer22 = ai.sendWithMessage(expert+user)
+        answer23 = ai.sendWithMessage(expert+answer)
+        answer221 = ai.sendWithMessage(expert+answer22)
+        answer222 = ai.sendWithMessage(expert+answer23)
+
+        answer2211 = ai.sendWithMessage(expert+answer221)
+        answer2222 = ai.sendWithMessage(expert+answer222)
+
+        answer22111 = ai.sendWithMessage(expert+answer2211)
+        answer22222 = ai.sendWithMessage(expert+answer2222)
+        answer222223 = ai.sendWithMessage(expert + answer2211 + answer2222)
+        history = list()
+        history.append(answer222223)
+        while(True):
+            inbp = user + " based on your expert observation of the list of meta knowledge?"
+            answer = ai.sendWithMessage(inbp, history)
+            history.append(inbp)
+            history.append(answer)
+            answer = ai.sendWithMessage("what about some data about it?", history)
+            break
+
     parser = CurveCatTime(["number", "word", "code", "whitespace", "unknown"])
-    someText = "testing 123"
     parser.parse(someText)
     parser.print_parsed_text()

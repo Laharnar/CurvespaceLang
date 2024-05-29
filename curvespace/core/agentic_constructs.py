@@ -5,7 +5,7 @@ from watchdog.events import FileSystemEventHandler
 import ollama
 import datetime
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'core/')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../core/')))
 from mechanistic_layers import BinaryConstruct
 
 from groq import Groq
@@ -45,10 +45,10 @@ def sendWithFileSave(question, loadContextFile = "context/history_" + str(
         datetime.date.today()) + ".json", addContextFiles = list(), sending = True, character = ""):
     return sendrecvQ2(question, loadContextFile, saveContextFile, addContextFiles, sending, character)
 
-def sendWithMessage(question, history=list(), name =None, customDelay = 0, rng = groqRandomness):
+def sendWithMessage(question, history=list(), name ="None", customDelay = 0, rng = groqRandomness):
     return sendandrecv(question, history, name, customDelay, rng)
 
-def sendandrecv(question, history=list(), name=None, customDelay=-1, rng=1):
+def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
     # ollama models
     # qwen:0.5b:   for speed bad answer
     # stable-code:   for fast code
