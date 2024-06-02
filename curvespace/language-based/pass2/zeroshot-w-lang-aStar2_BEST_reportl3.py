@@ -25,7 +25,6 @@ while("SOLVED" not in answer):
 
 #answer = ai("write report on solution to next person, on 1 page.", [answer])
 language = ai("create new language based on inspiration from context, and where it should head, in a way to stand independently.", [task, answer])
-answer = ai("use language to describe task and it's solution in context, even if it seems unrelated.", [task, answer, language])
 answer = ai("in context are new language, task, and solution to task. use new language to describe task and solution.", [task, answer, language])
 
 

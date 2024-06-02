@@ -38,6 +38,7 @@ def binaryParser(question = "", answer = ""):
     hasPrint = AIbit(i1, i2, lambda q, a: "print" in a)
     hasOneLine = AIbit(i1, i2, lambda q, a: "One-line" in a)
     hasDocs = AIbit(i1, i2, lambda q, a: "Documentation" in a)
+    hasMinuses = AIbit(i1, i2, lambda q, a: a.count("-") > 0)
 
     hasUnity = qORa("unity")
     hasScene = qORa("scene")
@@ -109,6 +110,7 @@ def binaryParser(question = "", answer = ""):
             traceback.print_exception(e)
             #getPyCode1(a)
         return code
+
     def getPyDefFnName(a):
         try:
             if(hasDef and hasParentheses):
@@ -120,15 +122,21 @@ def binaryParser(question = "", answer = ""):
             print(a)
         return None
 
-    def getPyCode(a):
-        return extractPyCode(a, 0)
-    def getPyCode1(a):
-        return extractPyCode(a, 1)
+    def getOneLinerList(answer):
+        if(not hasMinuses):
+            return []
+        listed = list()
+        for i in answer.split("\n"):
+            if("-" in i):
+                listed.append(i.strip("-").strip())
+        return listed
+
     oneLiner = extractOneLiner(answer)
-    code1 = getPyCode(answer)
-    code2 = getPyCode1(answer)
+    code1 = extractPyCode(answer, 0)
+    code2 = extractPyCode(answer, 1)
     code3 = extractPyCode(answer, 2)
     fnName = getPyDefFnName(answer)
+    listed = getOneLinerList(answer)
     # ==================================
     # loading
 
@@ -190,6 +198,7 @@ def binaryParser(question = "", answer = ""):
     binaryLayer["hasCode"] = (hasTripleMarker and not hasJsonWord) or code1
     binaryLayer["hasOneLiner"] =hasOneLine
     binaryLayer["oneLiner"] =oneLiner
+    binaryLayer["list"] =listed
 
 
     example='''
@@ -255,6 +264,7 @@ class BinaryConstruct:
         self.fnName = self.binaryLayer["fnName"]
         self.hasOneLiner = self.binaryLayer["hasOneLiner"]
         self.oneLiner = self.binaryLayer["oneLiner"]
+        self.list = self.binaryLayer["list"]
         self.codeall = ""
         if(self.code1 != None):
             self.codeall += self.code1
@@ -262,6 +272,7 @@ class BinaryConstruct:
             self.codeall += self.code2
         if (self.code3 != None):
             self.codeall += self.code3
+
     def list(self):
         for i in self.binaryLayer:
             print(i, self.binaryLayer[i])

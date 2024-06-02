@@ -21,7 +21,7 @@ while("SOLVED" not in answer):
     language = ai("create new language for this", [task, answer])
     solutions.append(answer)
     solutions.append(language)
-    answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
+    solution = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
 
 
 

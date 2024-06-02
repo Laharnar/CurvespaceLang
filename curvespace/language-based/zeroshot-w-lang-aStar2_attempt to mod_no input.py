@@ -12,6 +12,8 @@ language = ai("create new language for this\n" + task)
 solutions.append(language)
 while("SOLVED" not in answer):
 
+    #[answer, "using language to complete task", language] --> works but only implements language
+    #[task, "using language to complete task", language] --> loses focus
     answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [answer, "using language to complete task", language])
     #language = ai("create new language for this", [task, answer])# removing re-lang branches out
     solutions.append(answer)

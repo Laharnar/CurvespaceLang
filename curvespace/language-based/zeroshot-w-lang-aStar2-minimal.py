@@ -8,8 +8,7 @@ solutions = list()
 languages = list()
 answer = ai("+ <<SOLVED>>?\n"+task)
 solutions.append(task)
-language = ai("create new language for this\n" + task)
-solutions.append(language)
+language="Undefined"
 while("SOLVED" not in answer):
 
     answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [task, answer, "using language to complete task", language])

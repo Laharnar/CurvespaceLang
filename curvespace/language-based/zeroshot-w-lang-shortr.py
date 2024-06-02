@@ -12,11 +12,11 @@ language = ai("create new language for this\n" + task)
 solutions.append(language)
 while("SOLVED" not in answer):
 
-    answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", solutions)
+    answer = ai("describe state of task. if it's solved reply <<SOLVED>>\n", solutions)
     language = ai("create new language for this\n"+answer)
     solutions.append(answer)
     solutions.append(language)
-    language = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
+    language = ai("validate solution with provided language. reply <<SOLVED>> if it would cover original task.\n", solutions)
 
 
 

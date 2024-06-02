@@ -24,7 +24,7 @@ while("SOLVED" not in answer):
     answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
 
 #answer = ai("write report on solution to next person, on 1 page.", [answer])
-language = ai("create new language based on inspiration from context, and where it should head, in a way to stand independently.", [task, answer])
+language = ai("create new language based on inspiration for this.", [task, answer])
 answer = ai("in context are new language, task, and solution to task. use new language to describe task and solution.", [task, answer, language])
 
 

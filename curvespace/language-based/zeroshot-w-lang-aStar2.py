@@ -6,7 +6,7 @@ task = "find which fields of project in current folder could be improved"
 
 solutions = list()
 languages = list()
-answer = ai("+ <<SOLVED>>?\n"+task)
+answer = ai(task)
 solutions.append(task)
 language = ai("create new language for this\n" + task)
 solutions.append(language)

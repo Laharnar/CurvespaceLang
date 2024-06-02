@@ -8,7 +8,10 @@ solutions = list()
 languages = list()
 answer = ai("+ <<SOLVED>>?\n"+task)
 solutions.append(task)
-language = ai("create new language for this\n" + task)
+answer = ai("write commands in imaginary language that would solve this task \n"+task)
+
+
+language = ai("create new language based on this, for the task\n" + answer + " \ntask\n"+task)
 solutions.append(language)
 cyclicAnswer = answer
 cyclicLanguage = language
@@ -22,7 +25,6 @@ while("SOLVED" not in answer):
     answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", [task, path, cyclicLanguage])
     cyclicAnswer = answer
     cyclicLanguage = language
-
 
 
 

@@ -13,7 +13,7 @@ solutions.append(language)
 while("SOLVED" not in answer):
 
     answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [task, answer, "using language to complete task", language])
-    #language = ai("create new language for this", [task, answer])
+    #language = ai("create new language for this", [task, answer])# removing re-lang branches out
     solutions.append(answer)
     #solutions.append(language)
     answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)

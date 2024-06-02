@@ -45,8 +45,17 @@ def sendWithFileSave(question, loadContextFile = "context/history_" + str(
         datetime.date.today()) + ".json", addContextFiles = list(), sending = True, character = ""):
     return sendrecvQ2(question, loadContextFile, saveContextFile, addContextFiles, sending, character)
 
-def sendWithMessage(question, history=list(), name ="None", customDelay = 0, rng = groqRandomness):
-    return sendandrecv(question, history, name, customDelay, rng)
+def sendWithMessage(question, history=list(), name ="None", customDelay = 0, rng = groqRandomness, join =True):
+    answer = sendandrecv(question, history, name, customDelay, rng)
+    if(join):
+        return "".join(answer)
+    else:
+        return answer
+
+class Prompts:
+    @classmethod
+    def listItems(cls):
+        return ("List all names from this(list format: '-'):\n"
 
 def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
     # ollama models
@@ -74,33 +83,48 @@ def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
         x.append({'role':'user', 'content':question, 'name':name})
     else:
         x.append(i)
-
-
-    if(usedModel == "llama3:8b"):
-        groqmodel = "llama3-8b-8192"
-    elif(usedModel=="llama3:70b"):
-        groqmodel = "llama3-70b-8192"
-    elif(usedModel=="mixtral"):
-        groqmodel = "mixtral-8x7b-32768"
-    elif (usedModel == "gemma"):
-        groqmodel = "gemma-7b-it"
-    stream = groqClient.chat.completions.create(
-        model=groqmodel,
-        messages= x,
-        #[
-            #{
-            #    "role": "user",  # "system"
-            #    "content": "potato is great",
-            #    "name": "Joe"
-            #}
-        #],
-        temperature=rng,
-        max_tokens=800,
-        timeout=10,
-        top_p=1,
-        stream=True,
-        stop=None,
-    )
+    global usedModel
+    while True:
+        try:
+            if(usedModel == "llama3:8b"):
+                groqmodel = "llama3-8b-8192"
+            elif(usedModel=="llama3:70b"):
+                groqmodel = "llama3-70b-8192"
+            elif(usedModel=="mixtral"):
+                groqmodel = "mixtral-8x7b-32768"
+            elif (usedModel == "gemma"):
+                groqmodel = "gemma-7b-it"
+            stream = groqClient.chat.completions.create(
+                model=groqmodel,
+                messages= x,
+                #[
+                    #{
+                    #    "role": "user",  # "system"
+                    #    "content": "potato is great",
+                    #    "name": "Joe"
+                    #}
+                #],
+                temperature=rng,
+                max_tokens=800,
+                timeout=10,
+                top_p=1,
+                stream=True,
+                stop=None,
+            )
+            break
+        except Exception as e:
+            import traceback
+            traceback.print_exception(e)
+            print("model failed")
+            if (usedModel == "llama3:8b"):
+                usedModel = "llama3:70b"
+            elif (usedModel == "llama3:70b"):
+                usedModel = "mixtral"
+            elif (usedModel == "mixtral"):
+                usedModel = "gemma"
+            elif (usedModel == "gemma"):
+                usedModel = "llama3:8b"
+            print("new model", usedModel)
 
     #stream = ollama.chat(
     #    model=usedModel,
@@ -109,13 +133,13 @@ def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
     #    keep_alive=1
     #)
     #
-    answer = ""
+    answer = []
     tokens = 0
 
     for chunk in stream:
         if(isGroq):
             print(chunk.choices[0].delta.content or "", end="")
-            answer += chunk.choices[0].delta.content or ""
+            answer.append(chunk.choices[0].delta.content or "")
         else: # ollama
             print(chunk['message']['content'], end='', flush=True)
             answer += chunk["message"]["content"]
@@ -1111,7 +1135,6 @@ def start_new_thread():
 
 def requestAbort():
     if not queue.empty():
-
         # If there's something in the queue, get out of here
         print("Thread aborted")
         queue.pop()
