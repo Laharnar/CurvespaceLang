@@ -32,10 +32,12 @@ def aiChar(task, character, personality, canZeroShot=True):
         subhearts = list(hearts[:-4])
         for i in [character, personality, answer]:
             subhearts.append(i)
-        heart = ai("react to it in character", subhearts)
+        # talk about acc here is worse
+        heart = ai("react to it in character, and talk about it's accuracy", subhearts)
         if("<<ABORT>>" in heart):
             break
-        metas = ai("describe it in character what are abstract abstractions in this, and it's accuracy", [character, personality, heart])
+        # 3 abstrac tabs make it worse
+        metas = ai("describe it in character what are 3 abstract abstractions in this", [character, personality, heart])
         hearts.append(metas)
         hearts.append(heart)
         view = ai("describe layout and view in character", [character, personality, answer, metas])

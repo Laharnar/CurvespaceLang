@@ -8,11 +8,13 @@ def aiLang(task, canZeroShot=True):
     solutions = list()
     languages = list()
     answer = ai("+add <<SOLVED>> if its solved.=>\n"+task)
+    steps=1
     if(canZeroShot and "SOLVED" in answer):
         return answer
     solutions.append(task)
     language = ai("create new language for this\n" + task)
     solutions.append(language)
+    steps=2
     while("SOLVED" not in answer):
 
         # it feels like this has just the right balance of prioritization and openness. removing "task" loses some
@@ -25,6 +27,8 @@ def aiLang(task, canZeroShot=True):
         solutions.append(answer)
         solutions.append(language)
         answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
+        steps+=3
+    print("steps", steps)
     return answer
 
 aiLang(task)

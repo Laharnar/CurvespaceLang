@@ -7,6 +7,7 @@ task = "find which fields of project in current folder could be improved"
 solutions = list()
 languages = list()
 answer = ai("+ <<SOLVED>>?\n"+task)
+steps = 1
 while("SOLVED" not in answer):
 
     answer = ai("describe state of task. if it's solved reply <<SOLVED>>\n" + task, solutions)
@@ -22,7 +23,8 @@ while("SOLVED" not in answer):
     history.append(solution)
     languages.append(history)
     solutions.append(solution)
-
+    steps+=4
+print("steps", steps)
 
 
 

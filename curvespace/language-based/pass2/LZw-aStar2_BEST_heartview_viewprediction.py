@@ -31,11 +31,11 @@ def aiLang(task, canZeroShot=True):
         subhearts = list(hearts[:-4])
         for i in [character, personality, answer]:
             subhearts.append(i)
-        metas = ai("what are meta-meta abstractions in this", [character, personality, answer])
+        metas = ai("what are abstract abstractions in this", [character, personality, answer])
         heart = ai("describe it in character and how u like it", subhearts)
         hearts.append(heart)
         language = ai("create new language for this", [task, heart, answer])
-        view = ai("describe layout and view", [answer, language, metas])
+        view = ai("describe layout and view", [answer, metas])
         solutions.append(view)
         solutions.append(language)
         answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)

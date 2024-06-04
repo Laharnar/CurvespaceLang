@@ -46,7 +46,9 @@ def aiChar(task, character, personality, canZeroShot=True):
 
 if __name__ == '__main__':
     answer = aiChar(task, character, personality, canZeroShot=False)
-    answer = ai("extract TODOs. add <<USER>> if user should do these things.", [answer])
-    if( "USER" in answer):
-        print("WAITING USER")
-        input()
+    def getTodosUserInc():
+        answer = ai("extract TODOs. add <<USER>> if user should do these things.", [answer])
+        if( "USER" in answer):
+            print("WAITING USER")
+            input()
+    getTodosUserInc()

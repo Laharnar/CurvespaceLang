@@ -22,11 +22,6 @@ def aiLang(task, canZeroShot=True):
     view = ai("describe layout and view", [answer, language, metas])
     while("SOLVED" not in answer):
 
-        # it feels like this has just the right balance of prioritization and openness. removing "task" loses some
-        # creating new language for every step alleviates on previous failures
-        # this specific solution just FEELS like something else, like much more solid
-        # concept of interjecting languages work to guide more
-        # "solved" and solution, help with guiding to goal
         answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [task, answer, "using language to complete task", language, view])
         subhearts = list(hearts[:-4])
         for i in [character, personality, answer]:
@@ -36,7 +31,8 @@ def aiLang(task, canZeroShot=True):
         hearts.append(metas)
         hearts.append(heart)
         language = ai("create new language for this", [task, heart, answer])
-        view = ai("describe layout and view in chracter", [answer, metas])
+        # more concise i guess? not as open ended. defined better. but i liked interpretor one, from in char
+        view = ai("describe layout and view in character", [character, personality, answer, metas])
         solutions.append(view)
         solutions.append(language)
         solutions.append(answer)

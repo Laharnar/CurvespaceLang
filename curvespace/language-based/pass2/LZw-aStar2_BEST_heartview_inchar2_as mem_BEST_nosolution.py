@@ -21,7 +21,7 @@ def aiChar(task, character, personality, canZeroShot=True):
     steps=2
     metas = ai("what are meta-meta 5 layers in this", [character, personality, answer])
     view = ai("describe layout and view", [answer, language, metas])
-    while("SOLVED" not in answer and steps > 2):
+    while("SOLVED" not in answer or steps <= 2):
 
         # it feels like this has just the right balance of prioritization and openness. removing "task" loses some
         # creating new language for every step alleviates on previous failures
@@ -40,6 +40,7 @@ def aiChar(task, character, personality, canZeroShot=True):
         hearts.append(heart)
         view = ai("describe layout and view in character", [character, personality, answer, metas])
         language = ai("create new language for this", [task, metas, answer, view])
+        solutions = solutions[:-6]
         solutions.append(view)
         solutions.append(language)
         solutions.append(answer)
@@ -48,8 +49,9 @@ def aiChar(task, character, personality, canZeroShot=True):
     print("steps", steps)
     return answer
 
-answer = aiChar(task, character, personality, canZeroShot=False)
-answer = ai("extract TODOs. add <<USER>> if user should do these things.", [answer])
-if( "USER" in answer):
-    print("WAITING USER")
-    input()
+if __name__ == '__main__':
+    answer = aiChar(task, character, personality, canZeroShot=False)
+    answer = ai("extract TODOs. add <<USER>> if user should do these things.", [answer])
+    if( "USER" in answer):
+        print("WAITING USER")
+        input()

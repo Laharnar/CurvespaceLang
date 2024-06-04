@@ -24,7 +24,7 @@ while("SOLVED" not in answer):
     solutions.append(language)
     language = language2
     answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
-    steps+=2
+    steps+=3
 print("steps:", steps)
 
 
