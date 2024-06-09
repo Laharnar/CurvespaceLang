@@ -55,7 +55,7 @@ def sendWithMessage(question, history=list(), name ="None", customDelay = 0, rng
 class Prompts:
     @classmethod
     def listItems(cls):
-        return ("List all names from this(list format: '-'):\n"
+        return ("List all names from this(list format: '-'):\n")
 
 def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
     # ollama models

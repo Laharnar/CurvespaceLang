@@ -28,7 +28,7 @@ def aiLang(task, canZeroShot=True):
         # concept of interjecting languages work to guide more
         # "solved" and solution, help with guiding to goal
         answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [task, answer, "using language to complete task", language, view])
-        subhearts = list(hearts[:-4])
+        subhearts = list(hearts[-4:])
         for i in [character, personality, answer]:
             subhearts.append(i)
         metas = ai("describe it in character what are abstract abstractions in this", [character, personality, answer])

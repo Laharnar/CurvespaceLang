@@ -1,4 +1,6 @@
 import time
+
+import groq
 from groq import Groq
 groqClient = Groq(api_key="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")
 
@@ -65,17 +67,21 @@ def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
         time.sleep(USEREXPDELAY)
     elif(customDelay > 0):
         time.sleep(customDelay)
-    x = list()
+    items = list()
     for i in history:
         if(isinstance(i, str)):
             if ( i != ""):
-                x.append({'role':'user', 'content':i, 'name':name}) # 'name':'Doe'
+                items.append({'role':'user', 'content':i, 'name':name}) # 'name':'Doe'
         else:
-            x.append(i)
+            items.append(i)
     if (isinstance(question, str)):
-        x.append({'role':'user', 'content':question, 'name':name})
+        items.append({'role':'user', 'content':question, 'name':name})
     else:
-        x.append(i)
+        if(isinstance(i, list)):
+            for j in i:
+                items.append(j)
+        else:
+            items.append(i)
     global usedModel
     while True:
         try:
@@ -89,7 +95,7 @@ def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
                 groqmodel = "gemma-7b-it"
             stream = groqClient.chat.completions.create(
                 model=groqmodel,
-                messages= x,
+                messages= items,
                 #[
                     #{
                     #    "role": "user",  # "system"
@@ -99,11 +105,15 @@ def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
                 #],
                 temperature=rng,
                 max_tokens=800,
-                timeout=12,
+                timeout=20,
                 top_p=1,
                 stream=True,
                 stop=None,
             )
+            break
+        except groq.BadRequestError as e:
+            import traceback
+            traceback.print_exception(e)
             break
         except Exception as e:
             import traceback
@@ -144,15 +154,18 @@ def sendandrecv(question, history=list(), name="None", customDelay=-1, rng=1):
     return answer
 
 ai = sendWithMessage
-def aiLang(task, canZeroShot=True):
-    solutions = list()
+def aiLang(task, canZeroShot=True, maxMem = 16, OUTPUT="1", solutions=list(), rng= 0.55):
     languages = list()
-    answer = ai("+add <<SOLVED>> if its solved.=>\n"+task)
+    result = list()
+    answer = ai("+add <<SOLVED>> if its solved.=>\n"+task, history=solutions, rng=rng)
+    result.append(task)
+    result.append(answer)
     steps=1
     if(canZeroShot and "SOLVED" in answer):
         return answer
+    language = ai("create new language for this\n" + task, history=solutions, rng=rng)
     solutions.append(task)
-    language = ai("create new language for this\n" + task)
+    result.append(language)
     solutions.append(language)
     steps=2
     while("SOLVED" not in answer):
@@ -162,20 +175,43 @@ def aiLang(task, canZeroShot=True):
         # this specific solution just FEELS like something else, like much more solid
         # concept of interjecting languages work to guide more
         # "solved" and solution, help with guiding to goal
-        answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [task, answer, "using language to complete task", language])
-        language = ai("create new language for this", [task, answer])
+        answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [task, answer, "using language to complete task", language], rng=rng)
+        language = ai("create new language for this", [task, answer], rng=rng)
+        solutions = solutions[-maxMem:]
         solutions.append(answer)
         solutions.append(language)
-        answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
+        result.append(answer)
+        result.append(language)
+        answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions, rng=rng)
         steps+=2
     print("steps", steps)
-    return answer
+    result.append(answer)
+    result.append("steps "+ str(steps))
+    if(OUTPUT == "1"):
+        return answer
+    return result
 
-def getTodosUserInc():
-    answer = ai("extract TODOs. add <<USER>> if user should do these things.", [answer])
+def ailoop(start):
+    history = list()
+    history.append(start)
+    while(True):
+        print("next:")
+        x = input()
+        if(".exit" in x):
+            return
+        answer = ai(x, history)
+        history.append(x)
+        history.append(answer)
+
+def getTodosUserInc(answer):
+    if(isinstance(answer, list)):
+        answer = ai("extract TODOs. add <<USER>> if user should do these things.", answer)
+    else:
+        answer = ai("extract TODOs. add <<USER>> if user should do these things.", [answer])
     if( "USER" in answer):
         print("WAITING USER")
-        input()
+        return answer, input()
+    return answer, ""
 
 def aiCharLong(task, character, personality, canZeroShot=True):
     # character with infinte context
@@ -200,11 +236,12 @@ def aiCharLong(task, character, personality, canZeroShot=True):
         # concept of interjecting languages work to guide more
         # "solved" and solution, help with guiding to goal
         answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [task, answer, "using language to complete task", language, view])
-        subhearts = list(hearts[:-4])
+        subhearts = list(hearts[-4:])
         for i in [character, personality, answer]:
             subhearts.append(i)
         heart = ai("react to it in character", subhearts)
         if("<<ABORT>>" in heart):
+            print("ABORTING!!")
             break
         metas = ai("describe it in character what are abstract abstractions in this", [character, personality, heart])
         hearts.append(metas)
@@ -214,7 +251,13 @@ def aiCharLong(task, character, personality, canZeroShot=True):
         solutions.append(view)
         solutions.append(language)
         solutions.append(answer)
-        answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
+        # add interpretor solution first, then actual solution
+        # use intermediate interpreted solution
+        #  part A: interpretable solution with provided language, part B: usage of interpretor, part C: interpretor in py
+        # these 3 should be split in multiple messages
+        answer = ai("implement and validate solution with provided language. add interpretor solution first, then actual solution. reply <<SOLVED>> if it's solved.\n", solutions)
+        print("impl end")
+        #answer = ai("implement and validate solution with provided language. reply <<SOLVED>> if it's solved.\n", solutions)
         steps+=6
     print("steps", steps)
     return answer
@@ -237,7 +280,7 @@ def aiChar(task, character, personality, canZeroShot=True):
     while("SOLVED" not in answer or steps <= 2):
 
         answer = ai("describe state of task, what was done so far, and prediction for how much work is left in ideal scenario.", [task, answer, "using language to complete task", language, view])
-        subhearts = list(hearts[:-4])
+        subhearts = list(hearts[-4:])
         for i in [character, personality, answer]:
             subhearts.append(i)
         heart = ai("react to it in character, and it's accuracy", subhearts)
@@ -248,7 +291,7 @@ def aiChar(task, character, personality, canZeroShot=True):
         hearts.append(heart)
         view = ai("describe layout and view in character", [character, personality, answer, metas])
         language = ai("create new language for this", [task, metas, answer, view])
-        solutions = solutions[:-6]
+        solutions = solutions[-6:]
         solutions.append(view)
         solutions.append(language)
         solutions.append(answer)

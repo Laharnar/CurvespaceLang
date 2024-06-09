@@ -2,7 +2,14 @@
 from core.mincore import sendWithMessage as ai
 from core.mechanistic_layers import BinaryConstruct as Bin
 
-task = "read folder for files, analyze them and send them to database for link of which is in specific folder found on C:."
+task = """write code that will allow something like this in py:
+        linking = LinkGrid()
+        linking.stack(AnalysisGrid()) #analysis will be stacked bellow
+        cell = "some data"
+        linking.addCell(cell)
+        linking.runAnalysis()
+        linking.getData(cell) # auto created data from analysis
+        analysis.getData(cell) # auto created data from analysis"""
 
 def aiLang(task, canZeroShot=True):
     solutions = list()
